@@ -3,12 +3,29 @@ import { Homecontext } from "./contexts/Homecontext";
 import { Link } from "react-router-dom";
 import Cartitem from "./cartcomponent/Cartitem";
 function Cart() {
-  const { cartitem,price} = useContext(Homecontext);
+  const { cartitem,setCartitem,price} = useContext(Homecontext);
   const[Price,setPrice]=useState(0);
-
+  const [items,setItems]=useState(cartitem);
+  
   useEffect(()=>{
     setPrice(price);
   },[price])
+
+  const removecartitem=(ProductId)=>{
+    const temparray=items;
+    console.log(items);
+    let index=0;
+    const array=temparray.map(e => {
+      if(e.Pid===ProductId){
+        index=index + temparray.indexOf(e);
+        temparray.splice( index, 1);
+        console.log(temparray);
+        return temparray;
+      }
+    });
+    setItems(array);
+    setCartitem(array);
+  }
 
   return (
     <div>
@@ -31,7 +48,7 @@ function Cart() {
                       <div className="d-flex justify-content-between align-items-center mb-4">
                         <div>
                           <p className="mb-1">Shopping cart</p>
-                          <p className="mb-0">You have {cartitem.length?cartitem.length:0} items in your cart</p>
+                          <p className="mb-0">You have {items.length?items.length:0} items in your cart</p>
                         </div>
                         {/* <div>
                           <p className="mb-0">
@@ -43,9 +60,9 @@ function Cart() {
                         </div> */}
                       </div>
 
-                      {cartitem?cartitem.map((element) => {
-                        return (<Cartitem item={element?element:""} key={element.Pid?element.Pid:""}/>)
-                      }):[]}
+                      {items?items.map((element) => {
+                        return (<Cartitem item={element?element:""} onclick={(e)=>{removecartitem(e.target.value)}}/>);
+                      }):""}
                       
                       </div>
                     <div className="col-lg-5">
