@@ -22,7 +22,8 @@ function Productoneshort(props) {
           "Pdescription": props.desc,
           "Price": props.price,
           "Availableunits": props.aunit,
-          "Pimage":props.image
+          "Pimage":props.image,
+          "Squantity":1
         }]);
     
     

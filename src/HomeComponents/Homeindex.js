@@ -28,10 +28,10 @@ function Homeindex() {
       >
         <NavBar />
         <Routes>
-          <Route index element={<Cart />}></Route>
-          <Route path="/products" element={<Product />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
+          <Route index key={1} element={<Cart />}></Route>
+          <Route path="/products" key={2} element={<Product />}></Route>
+          <Route path="/login" key={3} element={<Login />}></Route>
+          <Route path="/register" key={4} element={<Register />}></Route>
         </Routes>
       </Homecontext.Provider>
     </div>

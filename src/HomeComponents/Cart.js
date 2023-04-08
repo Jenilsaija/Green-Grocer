@@ -3,20 +3,25 @@ import { Homecontext } from "./contexts/Homecontext";
 import { Link } from "react-router-dom";
 import Cartitem from "./cartcomponent/Cartitem";
 function Cart() {
-  const { cartitem,setCartitem,price} = useContext(Homecontext);
+  const { cartitem,setCartitem} = useContext(Homecontext);
   const[Price,setPrice]=useState(0);
   const [items,setItems]=useState(cartitem);
   
   useEffect(()=>{
-    setPrice(price);
-  },[price])
+    setItems(cartitem);
+    let pr=0;
+    items.forEach(e => {
+      pr = pr + e.Price * e.Squantity;
+    })
+    setPrice(pr);
+  },[cartitem])
 
-  const removecartitem=(ProductId)=>{
+
+  const removecartitem=(element)=>{
     const temparray=items;
-    console.log(items);
     let index=0;
     const array=temparray.map(e => {
-      if(e.Pid===ProductId){
+      if(e.Pid===element.target.key){
         index=index + temparray.indexOf(e);
         temparray.splice( index, 1);
         console.log(temparray);
@@ -60,9 +65,19 @@ function Cart() {
                         </div> */}
                       </div>
 
-                      {items?items.map((element) => {
-                        return (<Cartitem item={element?element:""} onclick={(e)=>{removecartitem(e.target.value)}}/>);
-                      }):""}
+                      {/* {items?items.map((itm) => {
+                        
+                        return (
+                        <div key={itm.Pid}>
+                        <Cartitem item={itm?itm:""} onclick={removecartitem}/>
+                        </div>);
+                      }):""} */}
+
+
+                      {items!==[]&&items.map((element)=>{return (<>
+                      <div >
+                      <Cartitem item={element?element:""} onclick={removecartitem}/>
+                      </div></>)})}
                       
                       </div>
                     <div className="col-lg-5">

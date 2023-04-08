@@ -2,21 +2,28 @@ import React, { useContext, useEffect, useState } from "react";
 import { Homecontext } from "../contexts/Homecontext";
 
 function Cartitem(props) {
-  const {price,setPrice } = useContext(Homecontext);
+  const {cartitem,setCartitem} = useContext(Homecontext);
   const [quantity, setQuantity]=useState(1);
   
 
   useEffect(()=>{
-    let tempPrice=0;
-    console.log(tempPrice)
-    tempPrice=tempPrice+props.item.Price*quantity;
-    console.log(tempPrice)
-    setPrice(tempPrice);
-  },[quantity]);
+    
+  },[]);
+
+  const quantitychange=async(qt)=>{
+    setQuantity(qt);
+    await setCartitem(cartitem.forEach(e => {
+      if (props.item.Pid==e.Pid) {
+        e.Squantity= parseInt(qt);
+      }
+    }));
+    setCartitem(cartitem);
+    console.log(cartitem);
+  }
 
   return (
-    <div>
-      <div className="card mb-3" >
+    <div key="1">
+      <div className="card mb-3">
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <div className="d-flex flex-row align-items-center">
@@ -35,7 +42,7 @@ function Cartitem(props) {
                     type="number"
                     id="quantitiy"
                     value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
+                    onChange={(e) => {quantitychange(e.target.value);}}
                   />
                 </p>
               </div>
