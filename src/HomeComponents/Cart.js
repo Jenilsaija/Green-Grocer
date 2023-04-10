@@ -1,40 +1,69 @@
-import React, { useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Homecontext } from "./contexts/Homecontext";
 import { Link } from "react-router-dom";
 import Cartitem from "./cartcomponent/Cartitem";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 function Cart() {
-  const { cartitem,setCartitem} = useContext(Homecontext);
-  const[Price,setPrice]=useState(0);
-  const [items,setItems]=useState(cartitem);
-  
-  useEffect(()=>{
+  const { cartitem, setCartitem,userid } = useContext(Homecontext);
+  const [Price, setPrice] = useState(0);
+  const [items, setItems] = useState(cartitem);
+  const[chname,setChname]=useState("");
+  const[cnum,setCnum]=useState("");
+
+  const navigate=useNavigate();
+  useEffect(() => {
+    if(userid==""){
+      navigate('/login');
+    }
     setItems(cartitem);
-    let pr=0;
-    items.forEach(e => {
-      pr = pr + e.Price * e.Squantity;
-    })
+    let pr = 0;
+    items.map((e) => {
+      if (e !== undefined) {
+        pr = pr + e.Price * e.Squantity;
+      }
+    });
     setPrice(pr);
-  },[cartitem])
+  }, [cartitem]);
 
-
-  const removecartitem=(element)=>{
-    const temparray=items;
-    let index=0;
-    const array=temparray.map(e => {
-      if(e.Pid===element.target.key){
-        index=index + temparray.indexOf(e);
-        temparray.splice( index, 1);
+  
+  const removecartitem = (element) => {
+    const temparray = items;
+    let index = 0;
+    const array = temparray.map((e) => {
+      if (e.Pid === element.target.key) {
+        index = index + temparray.indexOf(e);
+        temparray.splice(index, 1);
         console.log(temparray);
         return temparray;
       }
     });
     setItems(array);
     setCartitem(array);
+  };
+
+  const handleorderevent=()=>{
+    cartitem.map(async(e)=>{
+      const data={
+      "Userid":userid,
+      "Pid": e.Pid,
+      "Orderquantity": e.Squantity,
+      "Paymentdetails": {
+        "cardholderName":chname,
+        "cardnumber":cnum
+      },
+      "TotalAmount": Price,
+    }
+    await axios.post("http://localhost:4000/api/order/addneworder",data).then(res=>{console.log(res)})
+  })
+  alert("Order Conform Successfully");
   }
+
 
   return (
     <div>
-      <section className="h-100 h-custom" style={{backgroundColor: "#eee"}}>
+      <section className="h-100 h-custom" style={{ backgroundColor: "#eee" }}>
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col">
@@ -53,7 +82,10 @@ function Cart() {
                       <div className="d-flex justify-content-between align-items-center mb-4">
                         <div>
                           <p className="mb-1">Shopping cart</p>
-                          <p className="mb-0">You have {items.length?items.length:0} items in your cart</p>
+                          <p className="mb-0">
+                            You have {items.length ? items.length : 0} items in
+                            your cart
+                          </p>
                         </div>
                         {/* <div>
                           <p className="mb-0">
@@ -65,23 +97,26 @@ function Cart() {
                         </div> */}
                       </div>
 
-                      {/* {items?items.map((itm) => {
-                        
-                        return (
-                        <div key={itm.Pid}>
-                        <Cartitem item={itm?itm:""} onclick={removecartitem}/>
-                        </div>);
-                      }):""} */}
-
-
-                      {items!==[]&&items.map((element)=>{return (<>
-                      <div >
-                      <Cartitem item={element?element:""} onclick={removecartitem}/>
-                      </div></>)})}
-                      
-                      </div>
+                      {items.map((element) => {
+                        if (element !== undefined) {
+                          return (
+                            <>
+                              <div key={element.Pid ? element.Pid : ""}>
+                                <Cartitem
+                                  item={element ? element : ""}
+                                  onClick={removecartitem}
+                                />
+                              </div>
+                            </>
+                          );
+                        }
+                      })}
+                    </div>
                     <div className="col-lg-5">
-                      <div className="card text-white rounded-3 " style={{backgroundColor:"#00a85a"}}>
+                      <div
+                        className="card text-white rounded-3 "
+                        style={{ backgroundColor: "#00a85a" }}
+                      >
                         <div className="card-body">
                           <div className="d-flex justify-content-between align-items-center mb-4">
                             <h5 className="mb-0">Card details</h5>
@@ -114,6 +149,8 @@ function Cart() {
                                 id="typeName"
                                 className="form-control form-control-lg"
                                 siez="17"
+                                value={chname}
+                                onChange={(e)=>{setChname(e.target.value)}}
                                 placeholder="Cardholder's Name"
                               />
                               <label className="form-label" htmlFor="typeName">
@@ -126,6 +163,9 @@ function Cart() {
                                 type="text"
                                 id="cardno"
                                 className="form-control form-control-lg"
+                                
+                                value={cnum}
+                                onChange={(e)=>{setCnum(e.target.value)}}
                                 siez="17"
                                 placeholder="1234 5678 9012 3457"
                                 minLength="19"
@@ -150,7 +190,10 @@ function Cart() {
                                     minLength="7"
                                     maxLength="7"
                                   />
-                                  <label className="form-label" htmlFor="typeExp">
+                                  <label
+                                    className="form-label"
+                                    htmlFor="typeExp"
+                                  >
                                     Expiration
                                   </label>
                                 </div>
@@ -167,7 +210,10 @@ function Cart() {
                                     minLength="3"
                                     maxLength="3"
                                   />
-                                  <label className="form-label" htmlFor="typeText">
+                                  <label
+                                    className="form-label"
+                                    htmlFor="typeText"
+                                  >
                                     Cvv
                                   </label>
                                 </div>
@@ -189,17 +235,18 @@ function Cart() {
 
                           <div className="d-flex justify-content-between mb-4">
                             <p className="mb-2">Total(Incl. taxes)</p>
-                            <p className="mb-2">Rs. {Price+30}.00</p>
+                            <p className="mb-2">Rs. {Price + 30}.00</p>
                           </div>
 
                           <button
                             type="button"
+                            onClick={handleorderevent}
                             className="btn btn-warning btn-block btn-lg"
                           >
                             <div className="d-flex justify-content-between">
-                              <span>Rs. {Price+30}.00</span>&nbsp;&nbsp;
+                              <span>Rs. {Price + 30}.00</span>&nbsp;&nbsp;
                               <span>
-                                Checkout{" "}
+                                Conform Order{" "}
                                 <i className="fas fa-long-arrow-alt-right ms-2"></i>
                               </span>
                             </div>

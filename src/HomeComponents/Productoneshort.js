@@ -1,43 +1,44 @@
-import React, { useEffect, useState ,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Homecontext } from './contexts/Homecontext'
-import { useNavigate } from "react-router-dom";
+import { Homecontext } from "./contexts/Homecontext";
 
 function Productoneshort(props) {
   // const navigate = useNavigate();
-  const {cartitem,setCartitem} = useContext(Homecontext);
+  const { cartitem, setCartitem } = useContext(Homecontext);
   const [badge, setBadge] = useState("");
-  
+
   useEffect(() => {
     if (props.aunit === "0") {
       setBadge("Out Of Stock");
-    }else{setBadge(props.aunit)}
+    } else {
+      setBadge(props.aunit);
+    }
   }, []);
 
-  const addtocartclick=()=>{
-        setCartitem([...cartitem,{
-          "Pid":props.pid,
-          "Pname": props.title,
-          "Pcategory": props.Category,
-          "Pdescription": props.desc,
-          "Price": props.price,
-          "Availableunits": props.aunit,
-          "Pimage":props.image,
-          "Squantity":1
-        }]);
-    
-    
+  const addtocartclick = () => {
+    setCartitem([
+      ...cartitem,
+      {
+        Pid: props.pid,
+        Pname: props.title,
+        Pcategory: props.Category,
+        Pdescription: props.desc,
+        Price: props.price,
+        Availableunits: props.aunit,
+        Pimage: props.image,
+        Squantity: 1,
+      },
+    ]);
+
     // const data={ Pid: props.pid,
     // Userid: userid}
     // if(userid!==""){
     //   axios.post("http://localhost:4000/api/cart/additem",data).then((res)=>{
     // })
     // }else{
-    //   navigate('/login', { replace: true }); 
+    //   navigate('/login', { replace: true });
     // }
-
-  }
-
+  };
 
   return (
     <>
@@ -87,7 +88,13 @@ function Productoneshort(props) {
           >
             {badge}
           </div>
-          <img className="card-img-top" src={props.image} height={"100%"} width={"100%"} alt="..." />
+          <img
+            className="card-img-top"
+            src={props.image}
+            height={"100%"}
+            width={"100%"}
+            alt="..."
+          />
           <div className="card-body p-4">
             <div className="text-center">
               <h5 className="fw-bolder">{props.title}</h5>
@@ -104,7 +111,10 @@ function Productoneshort(props) {
           </div>
           <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
             <div className="text-center">
-              <button className="btn btn-outline-success mt-auto mx-2" onClick={addtocartclick}>
+              <button
+                className="btn btn-outline-success mt-auto mx-2"
+                onClick={addtocartclick}
+              >
                 Add to cart
               </button>
               <a className="btn btn-outline-success mt-auto" href="/">

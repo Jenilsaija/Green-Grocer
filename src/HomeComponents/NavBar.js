@@ -50,6 +50,11 @@ function NavBar() {
                   Products
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/orders">
+                  My Orders
+                </Link>
+              </li>
               {/* <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -106,7 +111,7 @@ function NavBar() {
             </ul>
             <ul className="navbar-nav d-flex flex-row me-1">
               <li className="nav-item me-3 me-lg-0">
-                <Link className="nav-link" to="/">
+                <Link className="nav-link" to="/cart">
                   <i className="fas fa-shopping-cart"></i>
                 </Link>
               </li>

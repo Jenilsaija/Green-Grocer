@@ -2,10 +2,6 @@ const mongoose=require("mongoose")
 const {Schema}=mongoose;
 
 const Ordersschema=Schema({
-    Oid:{
-        type:String,
-        required:true,
-    },
     Userid:{
         type:String,
         required:true
@@ -18,24 +14,17 @@ const Ordersschema=Schema({
         type:Number,
         default:1
     },
-    Payusing:{
-        type:String      
-    },
-    Paysatus:{
-        type:String,
-        required:true,
-        default:"panding"
+    Paymentdetails:{
+        default:{}
     },
     Orderdate:{
-        type:String,
-        defult:Date.now(),
+        type:Date,
+        default:Date.now(),
     },
-    Price:{
+    TotalAmount:{
         type:Number,
         default:0,
-        required:true,
     }
 
 })
-
-module.exports=mongoose.model("Address",Ordersschema);
+module.exports=mongoose.model("Order",Ordersschema);

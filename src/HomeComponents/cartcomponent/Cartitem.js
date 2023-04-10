@@ -1,29 +1,26 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Homecontext } from "../contexts/Homecontext";
 
 function Cartitem(props) {
-  const {cartitem,setCartitem} = useContext(Homecontext);
-  const [quantity, setQuantity]=useState(1);
-  
+  const { cartitem, setCartitem } = useContext(Homecontext);
+  const [quantity, setQuantity] = useState(1);
 
-  useEffect(()=>{
-    
-  },[]);
-
-  const quantitychange=async(qt)=>{
+  const quantitychange = async (qt) => {
     setQuantity(qt);
-    await setCartitem(cartitem.forEach(e => {
-      if (props.item.Pid==e.Pid) {
-        e.Squantity= parseInt(qt);
-      }
-    }));
+    await setCartitem(
+      cartitem.forEach((e) => {
+        if (props.item.Pid === e.Pid) {
+          e.Squantity = parseInt(qt);
+        }
+      })
+    );
     setCartitem(cartitem);
     console.log(cartitem);
-  }
+  };
 
   return (
-    <div key="1">
-      <div className="card mb-3">
+    <div>
+      <div className="card mb-3" key={props.item.Pid}>
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <div className="d-flex flex-row align-items-center">
@@ -42,7 +39,9 @@ function Cartitem(props) {
                     type="number"
                     id="quantitiy"
                     value={quantity}
-                    onChange={(e) => {quantitychange(e.target.value);}}
+                    onChange={(e) => {
+                      quantitychange(e.target.value);
+                    }}
                   />
                 </p>
               </div>
@@ -54,7 +53,11 @@ function Cartitem(props) {
               <div width={"80px"}>
                 <h5 className="mb-0 mx-3">{props.item.Price}</h5>
               </div>
-              <button onClick={props.onclick} className="btn btn-danger mx-2" style={{ color: "#cecece" }}>
+              <button
+                onClick={props.onClick}
+                className="btn btn-danger mx-2"
+                style={{ color: "#cecece" }}
+              >
                 <i className="fas fa-trash-alt"></i>
               </button>
             </div>

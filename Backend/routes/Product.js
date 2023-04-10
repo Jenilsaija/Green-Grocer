@@ -25,7 +25,7 @@ router.get("/allproducts", async(req, res) => {
   }
 });
 
-router.get("/spsearch/:id", async(req, res) => {
+router.post("/spsearch/:id", async(req, res) => {
   try {
     const product= await Product.findById(req.params.id);
     res.json(product);

@@ -18,11 +18,11 @@ function Login() {
     axios.post("http://localhost:4000/api/auth/login",Logindata).then((res)=>{
     if(res.data._id == null){
       navigate('/login', { replace: true });
-      console.log(res.data.warning);
+      alert(res.data.warning);
     }else{
       setUserid(res.data._id);
       setUsername(res.data.Name);
-      navigate('/', { replace: true }); 
+      navigate('/home', { replace: true }); 
     }
   })
   }
