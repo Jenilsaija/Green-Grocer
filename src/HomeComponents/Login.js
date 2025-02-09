@@ -1,13 +1,11 @@
-import React, { useState,useContext } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Homecontext } from './contexts/Homecontext'
 
 function Login() {
-  const { userid, username,setUserid, setUsername } = useContext(Homecontext);
   const[Email,setEmail]=useState("");
   const[Password,setPassword]=useState("");
-  const navigate = useNavigate(1);
+  const navigate = useNavigate();
 
   const submitclickhandle=(e)=>{
     e.preventDefault();
@@ -16,13 +14,12 @@ function Login() {
       Password:Password,
     }
     axios.post("http://localhost:4000/api/auth/login",Logindata).then((res)=>{
-    if(res.data._id == null){
+    if(!res.data.authtoken){
       navigate('/login', { replace: true });
       alert(res.data.warning);
     }else{
-      setUserid(res.data._id);
-      setUsername(res.data.Name);
-      navigate('/home', { replace: true }); 
+      localStorage.setItem("authtoken",res.data.authtoken);
+      navigate('/', { replace: true }); 
     }
   })
   }
@@ -34,7 +31,7 @@ function Login() {
         <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 justify-content-center">
           <div className="col mt-3 mb-5">
             <h3 className="text-center mb-3">Buy Your Grocery at your Home</h3>
-            <img src="./grocerylogin.jpg" height={"100%"} width={"100%"} />
+            <img src="./grocerylogin.jpg" alt="loginimage" height={"100%"} width={"100%"} />
           </div>
           <div className="col mt-3">
             <h2 className="mb-4">Login Here</h2>
@@ -52,7 +49,7 @@ function Login() {
                 <input type={"password"} autoComplete="on" className="form-control" id="Password" value={Password} onChange={(e)=>{setPassword(e.target.value)}}/>
               </div>
               <div className="mb-3">
-                <input type={"submit"} className="btn btn-warning" id="submit" value={"Login"} />
+                <input type={"submit"} className="btn " style={{backgroundColor:"#126E82",color:"white"}} id="submit" value={"Login"} />
               </div>
               <div className="mb-3">
                 you want to <Link to="/register" id="register" className="text-danger">Register</Link> ?  

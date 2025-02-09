@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import Showorders from "./Showorders";
 import Showproducts from "./ShowProducts";
 import Sidebar from "./Sidebar";
+import ShowAddresses from "./ShowAddresses";
 
 function Adminindex() {
   return (
@@ -30,6 +31,7 @@ function Adminindex() {
             <Route path="addproduct" element={<Addproduct />}></Route>
             <Route path="showproduct" element={<Showproducts />}></Route>
             <Route path="orders" element={<Showorders />}></Route>
+            <Route path="showaddresses" element={<ShowAddresses />}></Route>
           </Routes>
         </div>
       </main>

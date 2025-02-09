@@ -1,15 +1,32 @@
+import React from "react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 
 function Ordersitem(props) {
-  const [Product, setProduct] = useState([]);
-  useEffect(()=>{
+
+  const handlecancelorder=()=>{
+    const orderdata=props.orderitem?props.orderitem:[]
+    const oid=props.orderid?props.orderid:"";
+    let index = 0;
+    orderdata.map((e) => {
+      if (e.oid === oid) {
+        index = index + orderdata.indexOf(e);
+        orderdata.splice(index, 1);
+        return orderdata;
+      }
+      return ""
+    });
     axios
-      .post("http://localhost:4000/api/product/spsearch/" + props.Pid)
+      .delete("http://localhost:4000/api/order/cancelorder/" + oid,{
+        "headers":{
+          "auth-token":localStorage.getItem("authtoken")
+        }
+      })
       .then((res) => {
-        setProduct(res.data);
+        alert(res.data);
       });
-  })
+      
+  }
+  
   return (
     <div>
       <section className="vh-80 gradient-custom-2">
@@ -43,11 +60,11 @@ function Ordersitem(props) {
                 <div className="card-body p-4">
                   <div className="d-flex flex-row mb-2 pb-2">
                     <div className="flex-fill">
-                      <h5 className="bold">{Product.Pname}</h5>
+                      {/* <h5 className="bold">{props.Product.Pname}</h5> */}
                       <p className="text-muted"> Qt: {props.Orderquantity} item</p>
                       <h4 className="mb-3">
                         {" "}
-                        Rs. {Product.Price * props.Orderquantity}{" "}
+                        Rs. {props.pprice * props.Orderquantity}{" "}
                       </h4>
                       <p className="text-muted">
                         Status : <span className="text-body">on the way</span>
@@ -56,7 +73,9 @@ function Ordersitem(props) {
                     <div>
                       <img
                         className="align-self-center img-fluid"
-                        src={Product.Pimage}
+                        src={props.image?props.image:""}
+                        name={props.index?props.index:0}
+                        key={props.index?props.index:0}
                         alt="Productimage"
                         width="250"
                       />
@@ -66,9 +85,9 @@ function Ordersitem(props) {
                 <div className="card-footer p-3 ">
                   <div className="d-flex justify-content-between">
                     <h5 className="fw-normal mb-0">
-                      <a href="#!" className="btn btn-danger">
+                      <button onClick={handlecancelorder} className="btn btn-danger">
                         Cancel Order
-                      </a>
+                      </button>
                     </h5>
                   </div>
                 </div>

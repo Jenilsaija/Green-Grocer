@@ -9,22 +9,17 @@ import { Homecontext } from "./contexts/Homecontext";
 import Checkout from "./Checkout";
 import Orders from "./Orders";
 import Home from "./Home";
+import Nopage from "./Nopage";
 
 function Homeindex() {
-  const [userid, setUserid] = useState("");
   const [cartitem, setCartitem] = useState([]);
   const [price, setPrice] = useState(0);
-  const [username, setUsername] = useState("");
   return (
     <div>
       <Homecontext.Provider
         value={{
           cartitem,
-          username,
           setCartitem,
-          setUsername,
-          userid,
-          setUserid,
           price,
           setPrice,
         }}
@@ -38,6 +33,8 @@ function Homeindex() {
           <Route path="/checkout" key={5} element={<Checkout />}></Route>
           <Route path="/cart" key={5} element={<Cart/>}></Route>
           <Route path="/orders" key={6} element={<Orders/>}></Route>
+          <Route path="/404" key={6} element={<Nopage/>}></Route>
+          <Route path="*" key={6} element={<Nopage/>}></Route>
         </Routes>
       </Homecontext.Provider>
     </div>

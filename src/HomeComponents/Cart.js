@@ -2,64 +2,60 @@ import React, { useContext, useEffect, useState } from "react";
 import { Homecontext } from "./contexts/Homecontext";
 import { Link } from "react-router-dom";
 import Cartitem from "./cartcomponent/Cartitem";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Cart() {
-  const { cartitem, setCartitem,userid } = useContext(Homecontext);
+  const { cartitem, setCartitem } = useContext(Homecontext);
   const [Price, setPrice] = useState(0);
-  const [items, setItems] = useState(cartitem);
-  const[chname,setChname]=useState("");
-  const[cnum,setCnum]=useState("");
+  const [chname, setChname] = useState("");
+  const [cnum, setCnum] = useState();
 
-  const navigate=useNavigate();
   useEffect(() => {
-    if(userid==""){
-      navigate('/login');
-    }
-    setItems(cartitem);
     let pr = 0;
-    items.map((e) => {
+    cartitem.map((e) => {
       if (e !== undefined) {
         pr = pr + e.Price * e.Squantity;
       }
+      return "";
     });
     setPrice(pr);
   }, [cartitem]);
 
-  
   const removecartitem = (element) => {
-    const temparray = items;
-    let index = 0;
-    const array = temparray.map((e) => {
-      if (e.Pid === element.target.key) {
-        index = index + temparray.indexOf(e);
-        temparray.splice(index, 1);
-        console.log(temparray);
-        return temparray;
-      }
-    });
-    setItems(array);
-    setCartitem(array);
+    let arr = [];
+    if (cartitem.count === 0) {
+      cartitem.pop();
+    } else {
+      arr = cartitem.filter(function (e, index) {
+        return index !== element;
+      });
+    }
+    setCartitem(arr);
   };
 
-  const handleorderevent=()=>{
-    cartitem.map(async(e)=>{
-      const data={
-      "Userid":userid,
-      "Pid": e.Pid,
-      "Orderquantity": e.Squantity,
-      "Paymentdetails": {
-        "cardholderName":chname,
-        "cardnumber":cnum
-      },
-      "TotalAmount": Price,
-    }
-    await axios.post("http://localhost:4000/api/order/addneworder",data).then(res=>{console.log(res)})
-  })
-  alert("Order Conform Successfully");
-  }
-
+  const handleorderevent = () => {
+    cartitem.map(async (e) => {
+      const data = {
+        pid: e.Pid,
+        orderquantity: e.Squantity,
+        totalamount: Price,
+        cardholdername: chname,
+        cardnumber: cnum,
+      };
+      await axios
+        .post("http://localhost:4000/api/order/addneworder", data, {
+          headers: {
+            "auth-token": localStorage.getItem("authtoken"),
+          },
+        })
+        .then((res) => {
+          alert(res.data);
+        });
+    });
+    setCartitem([]);
+    setChname("");
+    setCnum("");
+  };
 
   return (
     <div>
@@ -70,7 +66,7 @@ function Cart() {
               <div className="card">
                 <div className="card-body p-4">
                   <div className="row">
-                    <div className="col-lg-7">
+                    <div className="col-lg-12">
                       <h5 className="mb-3">
                         <Link to="/products" className="text-body">
                           <i className="fas fa-long-arrow-alt-left me-2"></i>
@@ -83,8 +79,8 @@ function Cart() {
                         <div>
                           <p className="mb-1">Shopping cart</p>
                           <p className="mb-0">
-                            You have {items.length ? items.length : 0} items in
-                            your cart
+                            You have {cartitem.length ? cartitem.length : 0}{" "}
+                            items in your cart
                           </p>
                         </div>
                         {/* <div>
@@ -97,163 +93,41 @@ function Cart() {
                         </div> */}
                       </div>
 
-                      {items.map((element) => {
-                        if (element !== undefined) {
-                          return (
-                            <>
-                              <div key={element.Pid ? element.Pid : ""}>
-                                <Cartitem
-                                  item={element ? element : ""}
-                                  onClick={removecartitem}
-                                />
-                              </div>
-                            </>
-                          );
-                        }
-                      })}
+                      {cartitem &&
+                        cartitem.map((element, index) => {
+                          if (element) {
+                            return (
+                              <Cartitem
+                                item={element ? element : ""}
+                                key={index}
+                                onClick={removecartitem}
+                                index={index}
+                              />
+                            );
+                          } else {
+                            return "";
+                          }
+                        })}
                     </div>
-                    <div className="col-lg-5">
-                      <div
-                        className="card text-white rounded-3 "
-                        style={{ backgroundColor: "#00a85a" }}
-                      >
-                        <div className="card-body">
-                          <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h5 className="mb-0">Card details</h5>
-                            <img
-                              src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                              className="img-fluid rounded-3"
-                              width={"45px"}
-                              alt="Avatar"
-                            />
-                          </div>
 
-                          <p className="small mb-2">Card type</p>
-                          <a href="#!" type="submit" className="text-white">
-                            <i className="fab fa-cc-mastercard fa-2x me-2"></i>
-                          </a>
-                          <a href="#!" type="submit" className="text-white">
-                            <i className="fab fa-cc-visa fa-2x me-2"></i>
-                          </a>
-                          <a href="#!" type="submit" className="text-white">
-                            <i className="fab fa-cc-amex fa-2x me-2"></i>
-                          </a>
-                          <a href="#!" type="submit" className="text-white">
-                            <i className="fab fa-cc-paypal fa-2x"></i>
-                          </a>
+                    <hr className="my-4" />
 
-                          <form className="mt-4">
-                            <div className="form-outline form-white mb-4">
-                              <input
-                                type="text"
-                                id="typeName"
-                                className="form-control form-control-lg"
-                                siez="17"
-                                value={chname}
-                                onChange={(e)=>{setChname(e.target.value)}}
-                                placeholder="Cardholder's Name"
-                              />
-                              <label className="form-label" htmlFor="typeName">
-                                Cardholder's Name
-                              </label>
-                            </div>
+                    <div className="d-flex justify-content-between">
+                      <p className="mb-2">Subtotal</p>
+                      <p className="mb-2">Rs. {Price}</p>
+                    </div>
 
-                            <div className="form-outline form-white mb-4">
-                              <input
-                                type="text"
-                                id="cardno"
-                                className="form-control form-control-lg"
-                                
-                                value={cnum}
-                                onChange={(e)=>{setCnum(e.target.value)}}
-                                siez="17"
-                                placeholder="1234 5678 9012 3457"
-                                minLength="19"
-                                maxLength="19"
-                              />
-                              <label className="form-label" htmlFor="cardno">
-                                Card Number
-                              </label>
-                            </div>
-
-                            <div className="row mb-4">
-                              <div className="col-md-6">
-                                <div className="form-outline form-white">
-                                  <input
-                                    type="text"
-                                    id="typeExp"
-                                    className="form-control form-control-lg"
-                                    placeholder="MM/YYYY"
-                                    size="7"
-                                    autoComplete="username"
-                                    // id="exp"
-                                    minLength="7"
-                                    maxLength="7"
-                                  />
-                                  <label
-                                    className="form-label"
-                                    htmlFor="typeExp"
-                                  >
-                                    Expiration
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-6">
-                                <div className="form-outline form-white">
-                                  <input
-                                    type="password"
-                                    id="typeText"
-                                    autoComplete="current-password"
-                                    className="form-control form-control-lg"
-                                    placeholder="&#9679;&#9679;&#9679;"
-                                    size="1"
-                                    minLength="3"
-                                    maxLength="3"
-                                  />
-                                  <label
-                                    className="form-label"
-                                    htmlFor="typeText"
-                                  >
-                                    Cvv
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-
-                          <hr className="my-4" />
-
-                          <div className="d-flex justify-content-between">
-                            <p className="mb-2">Subtotal</p>
-                            <p className="mb-2">Rs. {Price}</p>
-                          </div>
-
-                          <div className="d-flex justify-content-between">
-                            <p className="mb-2">Shipping</p>
-                            <p className="mb-2">Rs. 30.00</p>
-                          </div>
-
-                          <div className="d-flex justify-content-between mb-4">
-                            <p className="mb-2">Total(Incl. taxes)</p>
-                            <p className="mb-2">Rs. {Price + 30}.00</p>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={handleorderevent}
-                            className="btn btn-warning btn-block btn-lg"
-                          >
-                            <div className="d-flex justify-content-between">
-                              <span>Rs. {Price + 30}.00</span>&nbsp;&nbsp;
-                              <span>
-                                Conform Order{" "}
-                                <i className="fas fa-long-arrow-alt-right ms-2"></i>
-                              </span>
-                            </div>
-                          </button>
-                        </div>
+                    <Link
+                      to="/checkout"
+                      className={`btn btn-block btn-lg col-lg-3 ${cartitem.length>0?"btn-success":"btn-primary disabled"}`}
+>
+                      <div className="d-flex justify-content-between">
+                        <span>
+                          Checkout Your Order{" "}
+                          <i className="fas fa-long-arrow-alt-right ms-2"></i>
+                        </span>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { Homecontext } from "./contexts/Homecontext";
 
 function Productoneshort(props) {
@@ -13,31 +12,21 @@ function Productoneshort(props) {
     } else {
       setBadge(props.aunit);
     }
+    // eslint-disable-next-line
   }, []);
 
   const addtocartclick = () => {
-    setCartitem([
-      ...cartitem,
-      {
-        Pid: props.pid,
-        Pname: props.title,
-        Pcategory: props.Category,
-        Pdescription: props.desc,
-        Price: props.price,
-        Availableunits: props.aunit,
-        Pimage: props.image,
-        Squantity: 1,
-      },
-    ]);
-
-    // const data={ Pid: props.pid,
-    // Userid: userid}
-    // if(userid!==""){
-    //   axios.post("http://localhost:4000/api/cart/additem",data).then((res)=>{
-    // })
-    // }else{
-    //   navigate('/login', { replace: true });
-    // }
+    const obj={
+      Pid: props.pid,
+      Pname: props.title,
+      Pcategory: props.Category,
+      Pdescription: props.desc,
+      Price: props.price,
+      Availableunits: props.aunit,
+      Pimage: props.image,
+      Squantity: 1
+    }
+    setCartitem([...cartitem,obj])
   };
 
   return (
@@ -91,8 +80,9 @@ function Productoneshort(props) {
           <img
             className="card-img-top"
             src={props.image}
-            height={"100%"}
-            width={"100%"}
+            height={"200px"}
+            width={"200px"}
+            style={{backgroundColor:"white"}}
             alt="..."
           />
           <div className="card-body p-4">
@@ -112,8 +102,9 @@ function Productoneshort(props) {
           <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
             <div className="text-center">
               <button
-                className="btn btn-outline-success mt-auto mx-2"
+                className="btn mt-auto mx-2"
                 onClick={addtocartclick}
+                style={{color:"white",backgroundColor:"#126E82"}}
               >
                 Add to cart
               </button>

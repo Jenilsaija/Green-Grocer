@@ -1,26 +1,30 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Homecontext } from "../contexts/Homecontext";
 
 function Cartitem(props) {
   const { cartitem, setCartitem } = useContext(Homecontext);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(props.item.Squantity?props.item.Squantity:1);
 
   const quantitychange = async (qt) => {
     setQuantity(qt);
-    await setCartitem(
-      cartitem.forEach((e) => {
-        if (props.item.Pid === e.Pid) {
-          e.Squantity = parseInt(qt);
+    const cartdata = cartitem;
+    const demo= cartdata.filter((e)=>{
+      if(qt===0){
+        return ""
+      }else{
+        if(e.Pid===props.item.Pid){
+          return e.Squantity=parseInt(qt)
+        }else{
+          return e
         }
-      })
-    );
-    setCartitem(cartitem);
-    console.log(cartitem);
+      }
+    })
+    setCartitem(demo);
   };
 
   return (
     <div>
-      <div className="card mb-3" key={props.item.Pid}>
+      <div className="card mb-3">
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <div className="d-flex flex-row align-items-center">
@@ -37,7 +41,7 @@ function Cartitem(props) {
                 <p className="small mb-0">
                   <input
                     type="number"
-                    id="quantitiy"
+                    name={props.index}
                     value={quantity}
                     onChange={(e) => {
                       quantitychange(e.target.value);
@@ -54,7 +58,9 @@ function Cartitem(props) {
                 <h5 className="mb-0 mx-3">{props.item.Price}</h5>
               </div>
               <button
-                onClick={props.onClick}
+                onClick={() => {
+                  props.onClick(props.index);
+                }}
                 className="btn btn-danger mx-2"
                 style={{ color: "#cecece" }}
               >

@@ -1,25 +1,118 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link ,useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useContext } from "react";
 import { Homecontext } from "./contexts/Homecontext";
-
 function NavBar() {
-  const { username } = useContext(Homecontext);
-  const user = username ? username : "Guest";
+  const [username,setUsername]=useState("Guest")
+  const {cartitem}=useContext(Homecontext)
+  const navigate=useNavigate();
+  const [isadmin,setIsadmin]=useState("");
+  let authtoken=localStorage.getItem("authtoken")
+
+  useEffect(()=>{
+    getuser()
+  },[authtoken])
+
+  const getuser=async()=>{
+    if (localStorage.getItem("authtoken")) {
+      await axios.post("http://localhost:4000/api/auth/getuser",{},{
+        "headers":{
+          "auth-token":localStorage.getItem("authtoken")
+        }
+      }).then((res)=>{
+        setUsername(res.data.name)
+        setIsadmin(res.data.isadmin) 
+      })
+    }
+  }
+
+  const logout=()=>{
+    localStorage.removeItem("authtoken")
+    setUsername("Guest");
+    setIsadmin(false)
+    navigate("/login")
+  }
+
+  const admincheck=()=>{
+    if (isadmin) {
+      return(<li className="nav-item">
+      <Link className="nav-link" to="/admin">
+        Admin
+      </Link>
+    </li>)
+    }else{
+      return ""
+    }
+  }
+
+  const checkcartitem=()=>{
+    if (cartitem.length>0) {
+      return(<span
+        className="position-absolute top-1 start-90 translate-middle bg-info border border-light rounded-circle"
+        style={{
+          fontSize: "10px",
+          padding: "1px",
+          width: "12px",
+          height: "12px",
+        }}
+      >
+        <span className="visually"></span>
+      </span>)
+    }else{
+      return ""
+    }
+      
+  }
+
+  const loginlogoutbtn = () => {
+    if (localStorage.getItem("authtoken")) {
+      return (
+        <>
+          <button         
+            className="btn me-3"
+            onClick={logout}
+            style={{ backgroundColor: "#126E82", color: "white" }}
+          >
+            Logout
+          </button>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Link to="/login" className="btn btn-light px-3 me-2">
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="btn me-3"
+            style={{ backgroundColor: "#126E82", color: "white" }}
+          >
+            Sign up
+          </Link>
+        </>
+      );
+    }
+  };
+
   return (
     <div>
       <nav
-        className="navbar navbar-expand-lg navbar-dark"
-        style={{ backgroundColor: "#00a85a" }}
+        className="navbar navbar-expand-lg"
+        // style={{ backgroundColor: "#c8d4ea" }}
       >
         <div className="container">
-          <Link className="navbar-brand" to="/">
+          <Link className="navbar-brand" to="/" style={{fontSize:"23px"}}>
             Green Grocer
           </Link>
 
           <button
             className="navbar-toggler"
             type="button"
-            data-toggle="collapse"
+            data-bs-toggle="collapse"
             data-bs-target="#navbarToggler"
             aria-controls="navbarToggler"
             aria-expanded="true"
@@ -55,6 +148,7 @@ function NavBar() {
                   My Orders
                 </Link>
               </li>
+              {admincheck()}
               {/* <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -95,7 +189,10 @@ function NavBar() {
                   placeholder="Search"
                   style={{ minwidth: "125px" }}
                 />
-                <span className="input-group-text border-0 d-none d-lg-flex bg-warning">
+                <span
+                  className="input-group-text border-0 d-none d-lg-flex "
+                  style={{ backgroundColor: "#126E82", color: "white" }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -112,7 +209,9 @@ function NavBar() {
             <ul className="navbar-nav d-flex flex-row me-1">
               <li className="nav-item me-3 me-lg-0">
                 <Link className="nav-link" to="/cart">
-                  <i className="fas fa-shopping-cart"></i>
+                  <i className="fas fa-shopping-cart">
+                    {checkcartitem()}
+                  </i>
                 </Link>
               </li>
             </ul>
@@ -120,9 +219,8 @@ function NavBar() {
             <div className="d-flex align-items-center">
               <ul className="navbar-nav flex-row">
                 <li className="nav-item me-3 me-lg-1">
-                  <a
+                  <div
                     className="nav-link d-sm-flex align-items-sm-center"
-                    href="/"
                   >
                     <img
                       src="./Profile avatar.jpeg"
@@ -131,18 +229,13 @@ function NavBar() {
                       alt="Black and White Portrait of a Man"
                       loading="lazy"
                     />
-                    <strong className="d-none d-sm-block ms-1 text-light">
-                      {user}
+                    <strong className="d-none d-sm-block ms-1 text-dark">
+                      {username}
                     </strong>
-                  </a>
+                  </div>
                 </li>
               </ul>
-              <Link to="/login" className="btn btn-light px-3 me-2">
-                Login
-              </Link>
-              <Link to="/register" className="btn btn-warning me-3">
-                Sign up
-              </Link>
+              {loginlogoutbtn()}
             </div>
           </div>
         </div>

@@ -1,6 +1,43 @@
 import React from "react";
+import axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
+  const [username,setUsername]=useState();
+  const navigate=useNavigate();
+  let authtoken=localStorage.getItem("authtoken")
+  
+  useEffect(()=>{
+      getuser()
+      // eslint-disable-next-line
+  },[authtoken])
+
+  const getuser=async()=>{
+    if (localStorage.getItem("authtoken")) {
+      await axios.post("http://localhost:4000/api/auth/getuser",{},{
+        "headers":{
+          "auth-token":localStorage.getItem("authtoken")
+        }
+      }).then((res)=>{
+        setUsername(res.data.name) 
+        if (!res.data.isadmin) {
+          navigate('../404')
+        }
+      })
+    }
+    else{
+      navigate("../404")
+    }
+  }
+
+
+  const logout=()=>{
+    localStorage.removeItem("authtoken")
+    navigate("../login")
+  }
+
   return (
     <>
       <nav
@@ -37,14 +74,7 @@ function NavBar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img
-                  src="https://github.com/mdo.png"
-                  alt=""
-                  width="32"
-                  height="32"
-                  className="rounded-circle me-2"
-                />
-                Jenil Saija
+                {username}
               </a>
               <ul className="dropdown-menu text-small shadow">
                 <li>
@@ -54,9 +84,9 @@ function NavBar() {
                 </li>
 
                 <li>
-                  <a className="dropdown-item" href="/">
+                  <button className="dropdown-item"  onClick={logout}>
                     Sign out
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>

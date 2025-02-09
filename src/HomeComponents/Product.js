@@ -21,14 +21,14 @@ function Product(props) {
                 {products.map((e) => {
                   return (
                     <Productoneshort
-                      key={e._id}
-                      pid={e._id}
-                      image={e.Pimage}
-                      title={e.Pname}
-                      price={e.Price}
-                      aunit={e.Availableunits}
-                      Category={e.Pcategory}
-                      desc={e.Pdescription}
+                      key={e.pid}
+                      pid={e.pid}
+                      image={e.pimage}
+                      title={e.pname}
+                      price={e.price}
+                      aunit={e.availableunits}
+                      Category={e.pcategory}
+                      desc={e.pdescription}
                     />
                   );
                 })}
